@@ -24,13 +24,15 @@ Mavericks doesn't have Java installed by default. If you try to use the `/usr/bi
 ```bash
 $ /usr/bin/java
 ```
-[![java-oracle.png]({{ site.baseurl }}/images/java-mavericks/java-oracle-s200.png)]({{ site.baseurl }}/images/java-mavericks/java-oracle-s1600.png)
+
+![java-oracle.png]({{ site.baseurl }}/images/java-mavericks/java-oracle-s1600.png)
 
 If you want to install Apple's Java instead, then run java from a subshell. This will pop up a dialog prompting you to directly install Apple's JDK.
 
 ```bash
 $ `/usr/bin/java`
 ```
-[![java-apple.png]({{ site.baseurl }}/images/java-mavericks/java-apple-s200.png)]({{ site.baseurl }}/images/java-mavericks/java-apple-s1600.png)
+
+![java-apple.png]({{ site.baseurl }}/images/java-mavericks/java-apple-s1600.png)
 
 The Java installer stub `/System/Library/Java/Support/CoreDeploy.bundle/Contents/Download\ Java\ Components.app` appears to check if it was invoked from an interactive TTY or not, and changes behavior accordingly.
