@@ -36,6 +36,25 @@ kvo = nil
 button.selected = true
 ```
 
+You can save the observer in an optional member and release it in the observation
+closure to implement a single-shot observation.
+
+```swift
+class ViewController: UIViewController {
+    @IBOutlet weak var button: UIButton!
+    var kvo: KeyValueObserver?
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        kvo = KeyValueObserver(source: button, keyPath: "highlighted", options: .New) {
+            (kvo, change) in
+            NSLog("observing %@ %@", kvo.keyPath, change)
+            self.kvo = nil
+        }
+    }
+}
+```
+
 The implementation uses a global singleton `NSObject` subclass `KVODispatcher` dispatcher as the observer. `KeyValueObserver` instance is marshalled unretained into an `UnsafeMutablePointer<KeyValueObserver>` and passed as the context to `addObserver:forKeyPath:options:context:`.
 
 `KVODispatcher.observeValueForKeyPath()` retrieves the `KeyValueObserver` instance from the context pointer and invokes the closure. Note that the `KeyValueObserver` is not retained when it is passed as the context or when it is extracted again - `KeyValueObserver.deinit` removes the observer so `observeValueForKeyPath()` should never be called with a deallocated instance. When you have finished observing, assign your `KeyValueObserver` optional to `nil` to remove the observer.
