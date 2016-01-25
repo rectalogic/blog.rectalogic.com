@@ -2,6 +2,7 @@
 title: "IPsec Private Subnet"
 layout: "post"
 permalink: "/2015/03/ipsec-private-subnet.html"
+tags: ["aws", "ipsec"]
 ---
 Sometimes you want to secure local traffic in a private subnet for compliance reasons, e.g. HIPAA requires data in-transit to be encrypted. This can be done at the application level if the application supports SSL, but it can also be done independent of the application using IPsec transport layer encryption.
 
@@ -15,7 +16,7 @@ Create a pre-shared key file for use with ISAKMP. We are using the wildcard `*` 
 
 Generate the file with a random key:
 
-```shell-session
+```console
 user@host$ echo "* " $(openssl rand -base64 48) > psk.txt
 user@host$ cat psk.txt
 *  /zatck0CNzYad4fGw4ZV9G1R8b93pdBzCc3I7iXh2zzvediol0yBR8F8wCHKryXE
@@ -23,7 +24,7 @@ user@host$ cat psk.txt
 
 Install the same file on each instance:
 
-```shell-session
+```console
 user@host$ sudo cp psk.txt /etc/racoon/psk.txt
 user@host$ sudo chmod 0400 /etc/racoon/psk.txt
 user@host$ sudo chown root.root /etc/racoon/psk.txt
@@ -48,7 +49,7 @@ listen {
 
 remote anonymous
 {
-    exchange_mode base;
+    exchange_mode base,main;
     passive off;
     nat_traversal off;
     dpd_delay 30;
@@ -139,7 +140,7 @@ Now you need to allow ISAKMP to talk on udp port 500, and enable IP protcol 50 (
 
 Finally, on each instance restart setkey - this will flush any existing SA and SPD kernel entries and load the mongodb security policy:
 
-```shell-session
+```console
 user@host$ sudo service setkey restart
  * Flushing IPsec SA/SP database:                                        [ OK ]
  * Loading IPsec SA/SP database:
@@ -149,14 +150,14 @@ done.
 
 Then restart racoon on each instance:
 
-```shell-session
+```console
 user@host$ sudo service racoon restart
  * Restarting IKE (ISAKMP/Oakley) server racoon                          [ OK ]
 ```
 
 Right now there are no ISAKMP SAs and no IPsec SAs:
 
-```shell-session
+```console
 user@host$ sudo racoonctl show-sa isakmp
 Destination            Cookies                           Created
 user@host$ sudo racoonctl show-sa ipsec
@@ -165,7 +166,7 @@ No SAD entries.
 
 If you attempt to establish a connection between two instances on port 27017 (in this case attempting to netcat to another instance on port 27017), this will negotiate a new security association.  You can troubleshoot by looking for racoon error messages in `/var/log/syslog`.
 
-```shell-session
+```console
 user@host$ netcat dev2 27017
 user@host$ sudo racoonctl show-sa isakmp
 Destination            Cookies                           Created
@@ -199,7 +200,7 @@ user@host$ sudo racoonctl show-sa ipsec
 
 Now if you install mongodb and configure a replicaset on your three hosts, they will communicate with each other over an IPsec encrypted transport. You can sniff to verify ESP traffic is being used:
 
-```shell-session
+```console
 user@host$ sudo tcpdump -vv -i eth0 esp
 tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 65535 bytes
 22:03:21.188112 IP (tos 0x0, ttl 64, id 12303, offset 0, flags [DF], proto ESP (50), length 236)
