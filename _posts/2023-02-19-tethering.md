@@ -26,7 +26,7 @@ Choose *Add Empty Tunnel...*, name it `pvpn` and configure similar to this,
 where `[Peer]` `PublicKey` is the key the server printed above:
 ![wireguard-config.png]({{ site.baseurl }}/images/wireguard-config.png)
 
-Activate the WireGuard tunnel and macOS traffic should now be over the VPN
-running on the iOS device.
+Activate the WireGuard tunnel while you are tethered to the iOS Personal Hotspot,
+and macOS traffic should now be routed over the VPN running on the iOS device.
 
 You can confirm both the iOS device and the macOS client have the same public IP by visiting http://ifconfig.co/ in Safari on iOS and in a browser on macOS.
