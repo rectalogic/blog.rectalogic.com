@@ -84,6 +84,14 @@ ul, ol, dl {
   padding-left: 30px;
 }
 
+dl dt {
+  padding-top: 1em;
+}
+
+dl dd {
+  padding-left: 2em;
+}
+
 ul {
   list-style-type: disc;
 }
